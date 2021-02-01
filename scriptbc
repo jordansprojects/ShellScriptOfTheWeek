@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#scriptbc-- Wrapper for 'bc' that returns the result of a calculation
+
+# Credit : Wicked Cool Shell Scripts - Dave Taylor and Brandon Perry
+
+# " This script demonstrates how you can use arguments to make commands more flexible. 
+# It is crucial to understand the difference between length and scale. As far as bc is concerned,
+# length refers to the total number of digits in the number, while scale is the total number of digits
+# after the decimal point. Thus 10.25 has a length of 4 and a scale of 2. While 3.14159 has a length of 
+# 6 and a scale of 5. 
+# By default, bc has a variable value for length, but because it has a scale of zero, bc without any modification
+# works exactly as the $(()) notation does. Fortunately, if you add the scale setting to bc, you find there's a lot
+# of hidden power under the hood. "
+ 
+if [ "$1" = "-p" ] ; then	# if the script is invoked with a '-p' flag it allows you to specify the desired precision of the output number. 
+	precision=$2		# if no precision is specified, the program defaults to scale=2
+	shift 2
+else
+	precision=2	#Default
+fi
+
+bc -q -l << EOF		# " '<<' allows you to include content from the script and treat it as if it were typed
+			# 	directly into the input stream. Referred to as writing a "here document"
+			#	whatever you put after the '<<' sequence is what it'll then seek to match
+			#	(on the line by itself) to denote the end of the input stream. "
+	scale=$precision
+	$*
+	quit
+EOF
+
+exit 0
+
