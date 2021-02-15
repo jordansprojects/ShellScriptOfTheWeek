@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# fmt -- Text formatting utility that acts as a wrapper for nroff
+#	Adds two useful flags: -w X for line width
+#	and -h to enable hyphenation for better fills
+# Credit : #14 Formatting Long Lines from Wicked Cool Shell Scripts by Dave Taylor and Brandon Perry
+
+while getopts "hw:" opt; do		# checks for flags
+	case $opt in		
+	 h ) hyph=1		;;
+	 w ) width="$OPTARG"	;;
+	esac
+done
+shift $(($OPTIND - 1))		# throw away all option flags using $OPTIND
+				#	(which holds the index of the next argument
+				#	 to be read by getopts)	
+
+				# feeds nroff with all necessary commands to achieve
+				#	desired output. (comment is above EOF bc it cannot 
+				#	have a space or tab after it!)
+nroff << EOF
+.ll ${width:-72}		# provides default value if the user hasn't specified one
+.na
+.hy ${hyph:-0}
+.pl 1
+				# calls cat command with the requested file names to process. 
+				#  	to complete this task, the cat's command output is also 
+				#	fed directly to nroff. 	
+
+$(cat "$@")		
+EOF
+exit 0
